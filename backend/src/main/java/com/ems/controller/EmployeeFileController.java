@@ -24,8 +24,6 @@ public class EmployeeFileController {
 
     private final EmployeeFileService fileService;
 
-    // ------------------------------------------------------------------ photo
-
     @PostMapping(value = "/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('PERM_CREATE', 'PERM_UPDATE')")
     public EmployeeResponse uploadPhoto(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
@@ -42,16 +40,12 @@ public class EmployeeFileController {
                 .body(photo.content());
     }
 
-    // ------------------------------------------------------------------ CV
-
     @PostMapping(value = "/cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('PERM_CREATE', 'PERM_UPDATE')")
     public EmployeeResponse uploadCv(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         return fileService.uploadCv(id, file);
     }
 
-    /** GET /api/employees/{id}/cv            -> affichage dans le navigateur
-     *  GET /api/employees/{id}/cv?download=true -> téléchargement */
     @GetMapping("/cv")
     @PreAuthorize("hasAuthority('PERM_READ')")
     public ResponseEntity<byte[]> getCv(@PathVariable Long id,

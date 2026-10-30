@@ -48,10 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
-                        // 401 : pas connecté ou token invalide
                         .authenticationEntryPoint((req, res, e) ->
                                 writeError(res, HttpStatus.UNAUTHORIZED, "Authentication required"))
-                        // 403 : connecté mais pas la permission
                         .accessDeniedHandler((req, res, e) ->
                                 writeError(res, HttpStatus.FORBIDDEN,
                                         "You do not have permission to perform this action")))

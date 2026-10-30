@@ -25,8 +25,6 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final StorageService storageService;
 
-    // ------------------------------------------------------------------ lecture
-
     @Transactional(readOnly = true)
     public PageResponse<EmployeeResponse> search(String search, int page, int size, String sortBy, String direction) {
         var pageable = PageableFactory.of(page, size, sortBy, direction, SORTABLE_FIELDS, "createdAt");
@@ -39,8 +37,6 @@ public class EmployeeService {
     public EmployeeResponse getById(Long id) {
         return EmployeeResponse.from(findOrThrow(id));
     }
-
-    // ------------------------------------------------------------------ écriture
 
     public EmployeeResponse create(EmployeeRequest req) {
         String email = normalizeEmail(req.email());
@@ -69,18 +65,12 @@ public class EmployeeService {
         Employee employee = findOrThrow(id);
         String photoKey = employee.getPhotoKey();
         String cvKey = employee.getCvKey();
-
         employeeRepository.delete(employee);
         employeeRepository.flush();
-
-        // Les fichiers ne doivent pas rester orphelins dans MinIO
         storageService.deleteQuietly(photoKey);
         storageService.deleteQuietly(cvKey);
     }
 
-    // ------------------------------------------------------------------ utilitaires
-
-    /** Utilisé aussi par les services fichiers et contrat (étapes 6 et 7). */
     @Transactional(readOnly = true)
     public Employee findOrThrow(Long id) {
         return employeeRepository.findById(id)
