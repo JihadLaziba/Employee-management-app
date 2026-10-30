@@ -11,8 +11,6 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    // En développement, /api est redirigé vers Spring Boot : pas de problème CORS.
-    // En production (Docker), c'est Nginx qui fait la même chose.
     proxy: {
       '/api': {
         target: 'http://localhost:8080',

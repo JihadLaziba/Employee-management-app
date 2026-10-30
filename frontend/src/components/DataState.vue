@@ -14,7 +14,6 @@ const emit = defineEmits(['retry'])
 </script>
 
 <template>
-  <!-- Erreur -->
   <div v-if="error" class="state state-error">
     <span class="state-icon"><AppIcon name="alert" :size="24" /></span>
     <h3>Something went wrong</h3>
@@ -25,14 +24,12 @@ const emit = defineEmits(['retry'])
     </button>
   </div>
 
-  <!-- Premier chargement : squelette -->
   <div v-else-if="loading && !loaded" class="skeleton" aria-busy="true" aria-label="Loading">
     <div v-for="row in 5" :key="row" class="skeleton-row">
       <span v-for="col in columns" :key="col" class="skeleton-cell" />
     </div>
   </div>
 
-  <!-- Vide -->
   <div v-else-if="empty" class="state">
     <span class="state-icon state-icon-muted"><AppIcon name="inbox" :size="24" /></span>
     <h3>{{ emptyTitle }}</h3>
@@ -40,7 +37,6 @@ const emit = defineEmits(['retry'])
     <slot name="empty-action" />
   </div>
 
-  <!-- Données (avec voile pendant le rechargement) -->
   <div v-else class="content" :class="{ refreshing: loading }">
     <slot />
   </div>

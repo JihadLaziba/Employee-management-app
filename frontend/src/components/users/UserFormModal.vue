@@ -152,7 +152,6 @@ async function submit() {
         </div>
       </div>
 
-      <!-- Permissions initiales (création uniquement, utilisateur normal) -->
       <div v-if="!isEdit && form.role === 'USER'" class="field">
         <label>Permissions</label>
         <div class="perm-list">

@@ -7,7 +7,6 @@ import AppSidebar from '@/components/AppSidebar.vue'
 const sidebarOpen = ref(false)
 const route = useRoute()
 
-// Referme la sidebar mobile à chaque changement de page
 watch(
   () => route.fullPath,
   () => {

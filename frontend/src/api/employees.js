@@ -1,6 +1,5 @@
 import http from './http'
 
-/** Le backend renvoie des URLs "/api/...", alors que axios a déjà baseURL = "/api". */
 const toApiPath = (url) => url.replace(/^\/api/, '')
 
 export const employeesApi = {
@@ -31,7 +30,6 @@ export const employeesApi = {
     return http.post(`/employees/${id}/cv`, form).then((r) => r.data)
   },
 
-  /** Télécharge un fichier protégé (photo, CV, contrat) en envoyant le JWT. */
   fetchBlob(url) {
     return http.get(toApiPath(url), { responseType: 'blob' })
   },

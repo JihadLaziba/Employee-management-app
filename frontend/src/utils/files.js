@@ -14,10 +14,6 @@ export const CV_RULES = {
   hint: 'PDF – max 5 MB',
 }
 
-/**
- * Pré-validation côté navigateur, pour un retour immédiat.
- * Le backend refait une vérification stricte (signature binaire du fichier).
- */
 export function validatePhoto(file) {
   if (!file) return ''
   if (!PHOTO_RULES.types.includes(file.type)) return 'Photo must be a JPEG, PNG or WEBP image'
@@ -39,7 +35,6 @@ export function formatFileSize(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
-/** Extrait le nom de fichier de l'en-tête Content-Disposition. */
 export function fileNameFromResponse(response, fallback) {
   const header = response.headers?.['content-disposition'] ?? ''
   const utf8 = header.match(/filename\*=UTF-8''([^;]+)/i)
@@ -48,7 +43,6 @@ export function fileNameFromResponse(response, fallback) {
   return plain ? plain[1] : fallback
 }
 
-/** Déclenche le téléchargement d'un Blob dans le navigateur. */
 export function saveBlob(blob, fileName) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -60,10 +54,6 @@ export function saveBlob(blob, fileName) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-/**
- * Ouvre un Blob dans un nouvel onglet.
- * L'onglet est ouvert AVANT la requête pour ne pas être bloqué par le navigateur.
- */
 export async function openBlobInNewTab(loader) {
   const tab = window.open('', '_blank')
   try {
@@ -81,7 +71,6 @@ export async function openBlobInNewTab(loader) {
   }
 }
 
-/** Les erreurs d'une réponse "blob" sont aussi des Blob : on relit le JSON pour avoir le message. */
 export async function getBlobErrorMessage(error, fallback) {
   const data = error?.response?.data
   if (data instanceof Blob) {
@@ -89,7 +78,6 @@ export async function getBlobErrorMessage(error, fallback) {
       const json = JSON.parse(await data.text())
       if (json?.message) return json.message
     } catch {
-      /* ignoré */
     }
   }
   return getErrorMessage(error, fallback)
