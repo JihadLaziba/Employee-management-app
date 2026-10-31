@@ -102,10 +102,9 @@ const emit = defineEmits(['close', 'view-cv', 'download-cv', 'download-contract'
 }
 .documents h4 {
   margin: 0 0 10px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
 }
 .doc {
   display: flex;

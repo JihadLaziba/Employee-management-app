@@ -1,36 +1,57 @@
+/* =========================================================
+   Thème global de l'application
+   ========================================================= */
+
 :root {
-  --bg: #f4f6f8;
+  /* Encre : barre latérale et titres */
+  --ink: #172033;
+  --ink-soft: #24304a;
+  --ink-text: #c9d1e1;
+
+  /* Fond de travail et surfaces */
+  --bg: #f3f4f6;
   --surface: #ffffff;
-  --surface-hover: #f1f5f9;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
+  --surface-hover: #f5f7fa;
+  --border: #e3e6ec;
+  --border-strong: #cfd5df;
+  --text: #172033;
+  --text-secondary: #3a4559;
+  --text-muted: #6b7486;
 
-  --primary: #0f766e;
-  --primary-hover: #115e59;
-  --primary-soft: #ccfbf1;
+  /* Vert sapin : actions principales */
+  --primary: #12665a;
+  --primary-hover: #0d5148;
+  --primary-soft: #e3f1ee;
 
-  --success: #15803d;
-  --success-soft: #dcfce7;
-  --danger: #dc2626;
-  --danger-hover: #b91c1c;
-  --danger-soft: #fee2e2;
-  --warning: #b45309;
-  --warning-soft: #fef3c7;
-  --info: #1d4ed8;
-  --info-soft: #dbeafe;
+  /* Laiton : repères actifs, utilisé avec parcimonie */
+  --brass: #b7832f;
+  --brass-soft: #f6ecd9;
 
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
+  --success: #1e7a46;
+  --success-soft: #e2f3e9;
+  --danger: #c8372d;
+  --danger-hover: #a92c23;
+  --danger-soft: #fbe7e5;
+  --warning: #9a6512;
+  --warning-soft: #fbf0dc;
+  --info: #2f5aa8;
+  --info-soft: #e5edf9;
+
+  /* Arrondis par niveau de hiérarchie */
+  --radius-sm: 6px;   /* champs, boutons, badges carrés */
+  --radius: 8px;      /* éléments interactifs */
+  --radius-lg: 12px;  /* cartes, panneaux */
+  --radius-xl: 16px;  /* fenêtres modales */
+
+  --shadow: 0 1px 2px rgba(23, 32, 51, 0.05);
+  --shadow-md: 0 4px 12px rgba(23, 32, 51, 0.06);
+  --shadow-lg: 0 18px 40px -12px rgba(23, 32, 51, 0.28);
 
   --navbar-height: 64px;
-  --sidebar-width: 232px;
+  --sidebar-width: 248px;
 
-  font-family:
-    'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-feature-settings: 'tnum' 0;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -53,11 +74,36 @@ h1,
 h2,
 h3 {
   line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* Focus clavier visible partout */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Chiffres alignés en colonnes (dates, montants, compteurs) */
+.num,
+.table td,
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 a {
   color: var(--primary);
 }
+
+/* ---------- Mise en page ---------- */
 
 .page-header {
   display: flex;
@@ -68,7 +114,8 @@ a {
   margin-bottom: 20px;
 }
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 600;
   margin: 0;
 }
 .page-subtitle {
@@ -82,6 +129,9 @@ a {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
+
+/* ---------- Boutons ---------- */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -89,7 +139,7 @@ a {
   gap: 8px;
   height: 38px;
   padding: 0 16px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   font: inherit;
   font-weight: 600;
@@ -164,6 +214,8 @@ a {
   cursor: not-allowed;
 }
 
+/* ---------- Formulaires ---------- */
+
 .field {
   display: flex;
   flex-direction: column;
@@ -184,8 +236,8 @@ a {
   width: 100%;
   height: 40px;
   padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -211,6 +263,9 @@ a {
   font-size: 12px;
   color: var(--text-muted);
 }
+
+/* ---------- Alertes ---------- */
+
 .alert {
   display: flex;
   align-items: center;
@@ -229,14 +284,16 @@ a {
   color: var(--info);
 }
 
+/* ---------- Badges ---------- */
+
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   background: var(--surface-hover);
   color: var(--text-secondary);
   white-space: nowrap;
@@ -258,6 +315,8 @@ a {
   color: var(--warning);
 }
 
+/* ---------- Spinner ---------- */
+
 .spinner {
   width: 16px;
   height: 16px;
@@ -272,6 +331,8 @@ a {
     transform: rotate(360deg);
   }
 }
+
+/* ---------- Tableaux ---------- */
 
 .toolbar {
   display: flex;
@@ -293,10 +354,8 @@ a {
 }
 .table th {
   text-align: left;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--text-muted);
   padding: 10px 16px;
   background: var(--bg);
@@ -305,6 +364,7 @@ a {
 }
 .table td {
   padding: 12px 16px;
+  white-space: nowrap;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -329,6 +389,8 @@ a {
 .text-muted {
   color: var(--text-muted);
 }
+
+/* ---------- Formulaires avancés ---------- */
 
 .grid-2 {
   display: grid;
@@ -373,6 +435,8 @@ a {
   color: var(--text-muted);
   font-size: 12px;
 }
+
+/* ---------- Liste de détails ---------- */
 
 .details {
   display: grid;

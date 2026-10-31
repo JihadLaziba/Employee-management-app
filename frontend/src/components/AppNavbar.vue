@@ -1,143 +1,105 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useToastStore } from '@/stores/toast'
 import AppIcon from './AppIcon.vue'
+import BrandMark from './BrandMark.vue'
+import NotificationBell from './NotificationBell.vue'
 
 const emit = defineEmits(['toggle-sidebar'])
 
 const auth = useAuthStore()
-const toast = useToastStore()
-const router = useRouter()
+const route = useRoute()
 
-function logout() {
-  auth.logout()
-  toast.success('You have been logged out')
-  router.push({ name: 'login' })
-}
+const title = computed(() => route.meta.title ?? '')
+
+const today = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())
 </script>
 
 <template>
-  <header class="navbar">
-    <div class="navbar-left">
-      <button class="icon-btn menu-btn" aria-label="Toggle menu" @click="emit('toggle-sidebar')">
+  <header class="topbar">
+    <div class="left">
+      <button class="icon-btn menu-btn" aria-label="Open menu" @click="emit('toggle-sidebar')">
         <AppIcon name="menu" />
       </button>
-      <RouterLink to="/" class="brand">
-        <span class="brand-logo">
-          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="currentColor" />
-            <path d="M10 10h12M10 16h9M10 22h12" stroke="#fff" stroke-width="3" stroke-linecap="round" />
-          </svg>
-        </span>
-        <span class="brand-text">
-          <strong>EMS</strong>
-          <small>Employee Management</small>
-        </span>
-      </RouterLink>
+      <BrandMark class="mobile-brand" :size="30" />
+      <div class="heading">
+        <p class="crumb">Workspace</p>
+        <p class="current">{{ title }}</p>
+      </div>
     </div>
 
-    <div class="navbar-right">
-      <div class="user">
-        <span class="avatar">{{ auth.initials }}</span>
-        <span class="user-info">
-          <span class="user-name">{{ auth.user?.name }}</span>
-          <span class="user-role">{{ auth.isSuperAdmin ? 'Super Administrator' : 'User' }}</span>
-        </span>
-      </div>
-      <button class="btn btn-ghost logout-btn" @click="logout">
-        <AppIcon name="logout" :size="16" />
-        <span class="logout-label">Logout</span>
-      </button>
+    <div class="right">
+      <span class="today">{{ today }}</span>
+      <NotificationBell v-if="auth.isSuperAdmin" />
     </div>
   </header>
 </template>
 
 <style scoped>
-.navbar {
+.topbar {
   height: var(--navbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  gap: 12px;
+  padding: 0 28px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 30;
 }
-.navbar-left,
-.navbar-right {
+.left,
+.right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
-.brand {
+.heading {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text);
-  text-decoration: none;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
 }
-.brand-logo {
-  color: var(--primary);
-  display: flex;
+.heading p {
+  margin: 0;
 }
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-.brand-text strong {
-  font-size: 16px;
-  letter-spacing: 0.04em;
-}
-.brand-text small {
-  font-size: 11px;
+.crumb {
   color: var(--text-muted);
 }
-.menu-btn {
+.crumb::after {
+  content: '/';
+  margin-left: 8px;
+  color: var(--border-strong);
+}
+.current {
+  font-weight: 600;
+  color: var(--text);
+}
+.today {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.menu-btn,
+.mobile-brand {
   display: none;
 }
-.user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--primary-soft);
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  font-weight: 700;
-}
-.user-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-.user-role {
-  font-size: 12px;
-  color: var(--text-muted);
-}
 
-@media (max-width: 860px) {
-  .menu-btn {
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 16px;
+  }
+  .menu-btn,
+  .mobile-brand {
     display: inline-flex;
+  }
+  .crumb {
+    display: none;
   }
 }
 @media (max-width: 560px) {
-  .brand-text small,
-  .user-info,
-  .logout-label {
+  .today {
     display: none;
   }
 }

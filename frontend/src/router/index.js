@@ -47,20 +47,19 @@ const router = createRouter({
   ],
 })
 
+/**
+ * Garde de navigation : protège les pages privées.
+ * (Le backend vérifie de toute façon chaque appel API.)
+ */
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
+
+  // Au premier chargement : vérifie auprès du backend si le cookie de session est valide
+  await auth.init()
 
   if (to.matched.some((r) => r.meta.requiresAuth)) {
     if (!auth.isAuthenticated) {
       return { name: 'login', query: { redirect: to.fullPath } }
-    }
-    if (!auth.user) {
-      try {
-        await auth.fetchMe()
-      } catch {
-        auth.logout()
-        return { name: 'login', query: { expired: '1' } }
-      }
     }
     if (to.meta.superAdminOnly && !auth.isSuperAdmin) {
       return { name: 'forbidden' }

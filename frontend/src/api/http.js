@@ -1,42 +1,21 @@
 import axios from 'axios'
 
-const TOKEN_KEY = 'ems_token'
-
-export const tokenStorage = {
-  get() {
-    try {
-      return localStorage.getItem(TOKEN_KEY)
-    } catch {
-      return null
-    }
-  },
-  set(token) {
-    try {
-      localStorage.setItem(TOKEN_KEY, token)
-    } catch {
-      /* ignoré */
-    }
-  },
-  clear() {
-    try {
-      localStorage.removeItem(TOKEN_KEY)
-    } catch {
-
-    }
-  },
-}
-
+/**
+ * Client HTTP de l'application.
+ *
+ * Authentification : le JWT est dans un cookie HttpOnly posé par le backend.
+ * Le navigateur l'envoie automatiquement, le JavaScript n'y a jamais accès.
+ *
+ * CSRF : le backend pose un cookie lisible "XSRF-TOKEN" ; axios le renvoie
+ * automatiquement dans l'en-tête "X-XSRF-TOKEN" (comportement par défaut d'axios
+ * pour les requêtes vers la même origine).
+ */
 const http = axios.create({
   baseURL: '/api',
   timeout: 30000,
-})
-
-http.interceptors.request.use((config) => {
-  const token = tokenStorage.get()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
+  withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 })
 
 let unauthorizedHandler = null
@@ -45,6 +24,7 @@ export function setUnauthorizedHandler(handler) {
   unauthorizedHandler = handler
 }
 
+// 401 = session expirée -> déconnexion (sauf pour les requêtes qui le demandent)
 http.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -55,6 +35,10 @@ http.interceptors.response.use(
   },
 )
 
+/**
+ * Message lisible pour l'utilisateur.
+ * Le backend renvoie toujours { message: "..." } : on n'affiche jamais d'erreur technique.
+ */
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
   if (!error?.response) {
     return 'Unable to reach the server. Please check your connection.'
@@ -63,6 +47,7 @@ export function getErrorMessage(error, fallback = 'Something went wrong. Please 
   return typeof message === 'string' && message ? message : fallback
 }
 
+/** Erreurs de validation par champ : { email: "Email is required", ... } */
 export function getFieldErrors(error) {
   return error?.response?.data?.fieldErrors ?? {}
 }

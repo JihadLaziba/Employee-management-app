@@ -10,6 +10,7 @@ import { CV_RULES, PHOTO_RULES, validateCv, validatePhoto } from '@/utils/files'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
+  /** null = création, sinon l'employé à modifier */
   employee: { type: Object, default: null },
 })
 const emit = defineEmits(['close', 'saved'])
@@ -72,6 +73,7 @@ watch(
 )
 onBeforeUnmount(() => setPhotoPreview(null))
 
+// Efface l'erreur d'un champ dès que l'utilisateur le corrige
 Object.keys(form).forEach((key) => {
   watch(
     () => form[key],
@@ -140,6 +142,7 @@ async function submit() {
     return
   }
 
+  // Les fichiers sont envoyés une fois l'employé enregistré
   const fileErrors = []
   if (photoFile.value) {
     try {
@@ -274,11 +277,9 @@ async function submit() {
 
 <style scoped>
 .section {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
   margin: 4px 0 12px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);

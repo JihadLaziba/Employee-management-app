@@ -13,11 +13,12 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
+// Si le backend répond 401 (token expiré ou invalide), on déconnecte proprement
 setUnauthorizedHandler(() => {
   const auth = useAuthStore()
   if (!auth.isAuthenticated) return
-  auth.logout()
-  router.push({ name: 'login', query: { expired: '1' } })
+  auth.clear()
+  router.push({ name: 'login', query: { reason: 'expired' } })
 })
 
 app.mount('#app')

@@ -76,7 +76,7 @@ onBeforeUnmount(() => {
 .modal {
   width: 100%;
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
   padding: 14px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 .modal-enter-active,
 .modal-leave-active {
