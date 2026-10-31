@@ -1,7 +1,7 @@
 package com.ems.entity;
 
-import com.ems.enums.Permission;
 import com.ems.enums.Role;
+import com.ems.enums.Permission;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +28,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    /** Hash BCrypt du mot de passe. */
     @Column(nullable = false)
     private String password;
 
@@ -45,6 +46,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
+
+    /** Dernière consultation des notifications (Super Admins). */
+    @Column(name = "notifications_seen_at")
+    private LocalDateTime notificationsSeenAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

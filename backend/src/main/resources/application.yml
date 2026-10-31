@@ -1,3 +1,7 @@
+# Les valeurs entre ${...:defaut} viennent des variables d'environnement (docker-compose).
+# Les valeurs par défaut permettent de lancer le backend depuis IntelliJ
+# pendant que PostgreSQL et MinIO tournent dans Docker.
+
 server:
   port: 8080
   error:
@@ -15,7 +19,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate        # Le schéma est géré par Flyway, Hibernate vérifie seulement
     open-in-view: false
     properties:
       hibernate:
@@ -33,7 +37,13 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:change-me-this-is-a-very-long-secret-key-for-jwt-signing-2026}
-    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    # Durée de vie courte (5 min) : le frontend la renouvelle tant que l'utilisateur est actif.
+    # Si l'utilisateur ferme l'application ou reste inactif, la session expire côté serveur.
+    expiration-ms: ${JWT_EXPIRATION_MS:300000}
+
+  cookie:
+    name: ${AUTH_COOKIE_NAME:EMS_SESSION}
+    secure: ${AUTH_COOKIE_SECURE:false}     # mettre true en production (HTTPS)
 
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}

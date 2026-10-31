@@ -1,5 +1,8 @@
 package com.ems.controller;
 
+import com.ems.service.EmployeeService;
+import com.ems.service.AuditService;
+import com.ems.enums.AuditAction;
 import com.ems.dto.FileDownload;
 import com.ems.service.ContractService;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +19,16 @@ import java.nio.charset.StandardCharsets;
 public class ContractController {
 
     private final ContractService contractService;
+    private final EmployeeService employeeService;
+    private final AuditService auditService;
 
+    /** GET /api/employees/{id}/contract -> télécharge le contrat PDF généré. */
     @GetMapping("/api/employees/{id}/contract")
     @PreAuthorize("hasAuthority('PERM_READ')")
     public ResponseEntity<byte[]> download(@PathVariable Long id) {
         FileDownload contract = contractService.generate(id);
+        auditService.record(AuditAction.CONTRACT_GENERATED, AuditService.EMPLOYEE, id,
+                employeeService.getById(id).fullName());
         ContentDisposition disposition = ContentDisposition.attachment()
                 .filename(contract.fileName(), StandardCharsets.UTF_8)
                 .build();

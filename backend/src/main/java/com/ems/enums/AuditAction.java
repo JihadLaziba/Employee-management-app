@@ -1,0 +1,20 @@
+package com.ems.enums;
+
+public enum AuditAction {
+    LOGIN,
+    LOGOUT,
+    SESSION_EXPIRED,
+
+    USER_CREATED,
+    USER_UPDATED,
+    USER_DELETED,
+    PERMISSIONS_UPDATED,
+
+    EMPLOYEE_CREATED,
+    EMPLOYEE_UPDATED,
+    EMPLOYEE_DELETED,
+    PHOTO_UPLOADED,
+    CV_UPLOADED,
+    CV_ACCESSED,
+    CONTRACT_GENERATED
+}

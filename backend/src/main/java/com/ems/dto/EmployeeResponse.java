@@ -1,11 +1,17 @@
 package com.ems.dto;
 
+import com.ems.common.TimeUtils;
 import com.ems.entity.Employee;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
+/**
+ * Employé renvoyé au frontend.
+ * Les clés MinIO internes ne sont pas exposées : le frontend reçoit
+ * les URLs de l'API qui servent la photo et le CV (protégées par le JWT).
+ */
 public record EmployeeResponse(
         Long id,
         String firstName,
@@ -22,8 +28,8 @@ public record EmployeeResponse(
         boolean hasCv,
         String cvFileName,
         String cvUrl,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
     public static EmployeeResponse from(Employee e) {
         boolean hasPhoto = e.getPhotoKey() != null;
@@ -45,7 +51,7 @@ public record EmployeeResponse(
                 hasCv,
                 e.getCvFileName(),
                 hasCv ? base + "/cv" : null,
-                e.getCreatedAt(),
-                e.getUpdatedAt());
+                TimeUtils.toInstant(e.getCreatedAt()),
+                TimeUtils.toInstant(e.getUpdatedAt()));
     }
 }

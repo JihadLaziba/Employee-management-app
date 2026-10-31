@@ -1,5 +1,8 @@
 package com.ems.controller;
 
+import com.ems.service.EmployeeService;
+import com.ems.service.AuditService;
+import com.ems.enums.AuditAction;
 import com.ems.dto.EmployeeResponse;
 import com.ems.dto.FileDownload;
 import com.ems.service.EmployeeFileService;
@@ -23,11 +26,17 @@ import java.nio.charset.StandardCharsets;
 public class EmployeeFileController {
 
     private final EmployeeFileService fileService;
+    private final EmployeeService employeeService;
+    private final AuditService auditService;
+
+    // ------------------------------------------------------------------ photo
 
     @PostMapping(value = "/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('PERM_CREATE', 'PERM_UPDATE')")
     public EmployeeResponse uploadPhoto(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        return fileService.uploadPhoto(id, file);
+        EmployeeResponse updated = fileService.uploadPhoto(id, file);
+        auditService.record(AuditAction.PHOTO_UPLOADED, AuditService.EMPLOYEE, id, updated.fullName());
+        return updated;
     }
 
     @GetMapping("/photo")
@@ -40,17 +49,26 @@ public class EmployeeFileController {
                 .body(photo.content());
     }
 
+    // ------------------------------------------------------------------ CV
+
     @PostMapping(value = "/cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('PERM_CREATE', 'PERM_UPDATE')")
     public EmployeeResponse uploadCv(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        return fileService.uploadCv(id, file);
+        EmployeeResponse updated = fileService.uploadCv(id, file);
+        auditService.record(AuditAction.CV_UPLOADED, AuditService.EMPLOYEE, id, updated.fullName(),
+                updated.cvFileName());
+        return updated;
     }
 
+    /** GET /api/employees/{id}/cv            -> affichage dans le navigateur
+     *  GET /api/employees/{id}/cv?download=true -> téléchargement */
     @GetMapping("/cv")
     @PreAuthorize("hasAuthority('PERM_READ')")
     public ResponseEntity<byte[]> getCv(@PathVariable Long id,
                                         @RequestParam(defaultValue = "false") boolean download) {
         FileDownload cv = fileService.getCv(id);
+        auditService.record(AuditAction.CV_ACCESSED, AuditService.EMPLOYEE, id,
+                employeeService.getById(id).fullName(), download ? "Downloaded" : "Viewed");
         ContentDisposition disposition = (download ? ContentDisposition.attachment() : ContentDisposition.inline())
                 .filename(cv.fileName(), StandardCharsets.UTF_8)
                 .build();

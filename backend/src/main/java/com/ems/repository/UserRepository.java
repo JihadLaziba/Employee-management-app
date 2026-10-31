@@ -1,5 +1,7 @@
 package com.ems.repository;
 
+import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.Modifying;
 import com.ems.entity.User;
 import com.ems.enums.Role;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
     long countByRoleAndEnabledTrue(Role role);
+
+    @Modifying
+    @Query("UPDATE User u SET u.notificationsSeenAt = :seenAt WHERE u.id = :id")
+    void markNotificationsSeen(@Param("id") Long id, @Param("seenAt") LocalDateTime seenAt);
 
     @Query("""
             SELECT u FROM User u

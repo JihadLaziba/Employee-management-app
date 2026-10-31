@@ -1,13 +1,15 @@
 package com.ems.dto;
 
+import com.ems.common.TimeUtils;
 import com.ems.entity.User;
 import com.ems.enums.Permission;
 import com.ems.enums.Role;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Set;
 
+/** Utilisateur renvoyé au frontend : le mot de passe n'est jamais exposé. */
 public record UserResponse(
         Long id,
         String name,
@@ -15,8 +17,8 @@ public record UserResponse(
         Role role,
         boolean enabled,
         Set<Permission> permissions,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
     public static UserResponse from(User u) {
         Set<Permission> perms = u.isSuperAdmin()
@@ -24,6 +26,6 @@ public record UserResponse(
                 : (u.getPermissions().isEmpty() ? EnumSet.noneOf(Permission.class) : EnumSet.copyOf(u.getPermissions()));
         return new UserResponse(
                 u.getId(), u.getName(), u.getEmail(), u.getRole(), u.isEnabled(),
-                perms, u.getCreatedAt(), u.getUpdatedAt());
+                perms, TimeUtils.toInstant(u.getCreatedAt()), TimeUtils.toInstant(u.getUpdatedAt()));
     }
 }
